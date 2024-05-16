@@ -27,6 +27,8 @@ def markdown_to_bbcode(markdown_text):
     for markdown_regex, bbcode_replacement in markdown_to_bbcode.items():
         if callable(bbcode_replacement):
             bbcode_text = re.sub(markdown_regex, bbcode_replacement, bbcode_text, flags=re.MULTILINE)
+            #print(bbcode_replacement)
+            #print(bbcode_text)
         else:
             bbcode_text = re.sub(markdown_regex, bbcode_replacement, bbcode_text)
 
@@ -61,14 +63,31 @@ if __name__ == "__main__":
             img_pattern = r'\[url=([^\]]+\.(?:gif|png|jpg|svg))\]([^/]+)\[/url\]'
             if re.match(img_pattern, bbcode_lines[i]):
                 image_url = re.search(img_pattern, bbcode_lines[i]).group(1)
-                print(image_url)
+                #print(image_url)
 
                 url_pattern = r'\[url=.*?\]\(([^)]+)\)'
                 if re.match(url_pattern, bbcode_lines[i]):
                     actual_url = re.search(url_pattern, bbcode_lines[i]).group(1)
-                    print(actual_url)
+                    #print(actual_url)
                     modified_img_string = f"[url={actual_url}][img]{image_url}[/img][/url]"
                     bbcode_lines[i] = modified_img_string
+
+            # check lists
+            if is_list:
+                print("is_list")
+                if bbcode_lines[i].startswith("- "):
+                    print(bbcode_lines[i])
+                    bbcode_lines[i]  = f"*{bbcode_lines[i][1:]}"
+                else:
+                    bbcode_lines[i]  = r"[/list]"
+                    is_list  = False
+
+            if bbcode_lines[i].startswith("- ") and is_list == False:
+                is_list = True
+                bbcode_lines[i] = f"[list]\n*{bbcode_lines[i][1:]}"
+
+
+
 
         # write to .bb file in the out directory
         bbcode_text = "\n".join(bbcode_lines)
