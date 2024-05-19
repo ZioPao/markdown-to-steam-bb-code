@@ -6,8 +6,6 @@ def markdown_to_bbcode(markdown_text):
     italic_regex = r'\*(.*?)\*'
     code_regex = r'`([^`]+)`'
     header_regex = r'^(#+)\s*(.*?)$'
-    unordered_list_regex = r'^\s*[-*]\s+(.*?)$'
-    ordered_list_regex = r'^\s*\d+\.\s+(.*?)$'
     link_regex = r'\[([^\]]+)\]\(([^\)]+)\)'
 
     # Dictionary to hold the translations of Markdown to BBCODE elements
@@ -16,8 +14,6 @@ def markdown_to_bbcode(markdown_text):
         italic_regex: r'[i]\1[/i]',
         code_regex: r'[code]\1[/code]',
         header_regex: lambda match: f"[h1]{match.group(2)}[/h1]",
-        unordered_list_regex: r'[*]\1',
-        ordered_list_regex: lambda match: f"[#]{match.group(1)}",
         link_regex: r'[url=\2]\1[/url]',
     }
     # [url=https://ko-fi.com/M4M7IERNW][img]https://storage.ko-fi.com/cdn/kofi3.png[/img][/url]
@@ -77,14 +73,14 @@ if __name__ == "__main__":
                 print("is_list")
                 if bbcode_lines[i].startswith("- "):
                     print(bbcode_lines[i])
-                    bbcode_lines[i]  = f"*{bbcode_lines[i][1:]}"
+                    bbcode_lines[i]  = f"[*]{bbcode_lines[i][1:]}"
                 else:
-                    bbcode_lines[i]  = r"[/list]"
+                    bbcode_lines[i]  = "[/list]\n"
                     is_list  = False
 
             if bbcode_lines[i].startswith("- ") and is_list == False:
                 is_list = True
-                bbcode_lines[i] = f"[list]\n*{bbcode_lines[i][1:]}"
+                bbcode_lines[i] = f"[list]\n[*]{bbcode_lines[i][1:]}"
 
 
 
